@@ -955,7 +955,10 @@ fn execute_response(data: Option<Binary>) -> Option<Binary> {
 #[cfg(test)]
 mod test {
     use cosmwasm_std::testing::{mock_env, mock_info, MockApi, MockQuerier, MockStorage};
-    use cosmwasm_std::{coin, from_slice, to_vec, BankMsg, Coin, CosmosMsg, Empty, StdError};
+    use cosmwasm_std::{
+        coin, from_slice, to_vec, BankMsg, Coin, CosmosMsg, Empty, GovMsg, IbcMsg, IbcQuery,
+        StdError,
+    };
 
     use crate::app::Router;
     use crate::bank::BankKeeper;
@@ -974,6 +977,8 @@ mod test {
         WasmKeeper<ExecC, QueryC>,
         StakeKeeper,
         DistributionKeeper,
+        FailingModule<IbcMsg, IbcQuery, Empty>,
+        FailingModule<GovMsg, Empty, Empty>,
     >;
 
     fn mock_router() -> BasicRouter {
@@ -983,6 +988,8 @@ mod test {
             custom: FailingModule::new(),
             staking: StakeKeeper::new(),
             distribution: DistributionKeeper::new(),
+            ibc: FailingModule::new(),
+            gov: FailingModule::new(),
         }
     }
 
